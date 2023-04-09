@@ -1,0 +1,6 @@
+player_*
+rand_player
+.vscode
+.DS_Store
+data
+new_stats
