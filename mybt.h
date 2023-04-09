@@ -7,7 +7,6 @@
 #define WHITE 0
 #define BLACK 1
 #define EMPTY 2
-#define DEPTH 5
 char* cboard = (char*)"o@.";
 
 struct bt_piece_t {
@@ -84,7 +83,7 @@ struct bt_t {
   long long int mkH3();
       
   // déclarées mais non définies
-  int eval();
+  double eval();
   bt_move_t minimax(double _sec);
   bt_move_t alphabeta(double _sec);
   bt_move_t mcts(double _sec);
@@ -226,12 +225,12 @@ bt_move_t bt_t::get_rand_move() {
   update_moves();
   int r = ((int)rand())%nb_moves;
   return moves[r];
-};
+}
 
 
-int bt_t::eval()
+double bt_t::eval()
  {
-  int score = 0;
+  double score = 0;
   for (int i = 0; i < nbl; ++i) {
     for (int j = 0; j < nbc; ++j) {
       int piece = board[i][j];
@@ -241,43 +240,30 @@ int bt_t::eval()
   }
   return score;
 };
-
-bt_move_t bt_t::minimax(double time_left) {
-  bt_move_t best_move;
-  double best_score;
-  bool first_child;
-  best_score = -INFINITY;
-  first_child = true;
-  for(int i = 0; i < nbl; i++) {
-    for(int j = 0; j < nbc; j++) {
-      if(board[i][j] == EMPTY) {
-        bt_move_t m;
-        m.line_i = i;
-        m.col_i = j;
-        if(first_child) {
-          first_child = false;
-          best_move = m;
-          board[i][j] = WHITE;
-          best_score = -eval();
-          board[i][j] = EMPTY;
-        } else {
-          board[i][j] = WHITE;
-          double s = -eval();
-          board[i][j] = EMPTY;
-          if(s > best_score) {
-            best_score = s;
-            best_move = m;
-          }
-        }
-        double end = clock();
-        double used_time = (end - DEPTH) / CLOCKS_PER_SEC;
-        if (used_time > time_left) break;
+ 
+bt_move_t bt_t::minimax(double _sec) {
+  int depth = 5;
+  bt_move_t best_move = moves[0];
+  double best_score = -INFINITY;
+  double alpha = -INFINITY;
+  double beta = INFINITY;
+  int max_depth = nbl * nbl;
+  time_t start_time = time(NULL);
+  while (depth <= max_depth && difftime(time(NULL), start_time) < _sec) {
+    // printf("%ld\n",(long)start_time);
+    for (int i = 0; i < nb_moves; i++) {
+      bt_t child = *this;
+      child.play(moves[i]);
+      double score = child.score(turn);
+      if (score > best_score) {
+        best_move = moves[i];
+        best_score = score;
       }
     }
+    depth++;
   }
   return best_move;
 }
-
 
 bool bt_t::can_play(bt_move_t _m) {
   int dx = abs(_m.col_f - _m.col_i);
