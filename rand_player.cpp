@@ -13,7 +13,7 @@ bool white_turn = true;
 #define VERBOSE_RAND_PLAYER
 bool verbose = true;
 bool showboard_at_each_move = false;
-double seconds = 59.87;
+double seconds = 60;
 #endif
 
 void help() {
