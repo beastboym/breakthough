@@ -77,19 +77,11 @@ struct bt_t {
   void play(bt_move_t _m);
   int endgame();
   double score(int _color);
-  void playout(bool _log);
-  std::string mkH1();
-  std::string mkH2();
-  long long int mkH3();
       
   // déclarées mais non définies
   double eval();
   bt_move_t minimax(double _sec);
-  bt_move_t alphabeta(double _sec);
-  bt_move_t mcts(double _sec);
-  bt_move_t mcts_ppa(double _sec);
-  bt_move_t nmcs(double _sec);
-  bt_move_t nrpa(double _sec);
+ 
 
   void add_move(int _li, int _ci, int _lf, int _cf) {
     moves[nb_moves].line_i = _li; moves[nb_moves].col_i = _ci;
@@ -245,8 +237,6 @@ bt_move_t bt_t::minimax(double _sec) {
   int depth = 5;
   bt_move_t best_move = moves[0];
   double best_score = -INFINITY;
-  double alpha = -INFINITY;
-  double beta = INFINITY;
   int max_depth = nbl * nbl;
   time_t start_time = time(NULL);
   while (depth <= max_depth && difftime(time(NULL), start_time) < _sec) {
